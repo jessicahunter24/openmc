@@ -397,6 +397,9 @@ contains
         case ('-t', '-track', '--track')
           write_all_tracks = .true.
           i = i + 1
+        case ('-vk', '-volume_fractions', '-volfrac')
+          ! JLH ufs Adding volume fraction calculation as a run mode
+          run_mode = MODE_VOLUMEFRAC
         case default
           message = "Unknown command line option: " // argv(i)
           call fatal_error()

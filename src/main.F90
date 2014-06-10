@@ -7,7 +7,8 @@ program main
   use global
   use initialize,        only: initialize_run
   use particle_restart,  only: run_particle_restart
-  use plot,              only: run_plot
+  use plot,              only: run_ploti
+  use volume_fraction,   only: run_volfrac
 
   implicit none
 
@@ -22,6 +23,8 @@ program main
     call run_eigenvalue()
   case (MODE_PLOTTING)
     call run_plot()
+  case (MODE_VOLUMEFRAC) ! JLH ufs adding run mode to main
+    call run_volfrac()
   case (MODE_PARTICLE)
     if (master) call run_particle_restart()
   end select

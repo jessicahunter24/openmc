@@ -361,6 +361,7 @@ module constants
        MODE_EIGENVALUE  = 2, & ! K eigenvalue mode
        MODE_PLOTTING    = 3, & ! Plotting mode
        MODE_PARTICLE    = 4    ! Particle restart mode
+       MODE_VOLUMEFRAC  = 5    ! JLH ufs Adding run mode to constants list
 
   ! Unit numbers
   integer, parameter :: UNIT_SUMMARY  = 11 ! unit # for writing summary file
