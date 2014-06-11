@@ -11,7 +11,6 @@ module mesh_header
     integer :: id                          ! user-specified id
     integer :: type                        ! rectangular, hexagonal
     integer :: n_dimension                 ! rank of mesh
-    real(8) :: volume_frac                 ! volume fraction of each cell
     integer, allocatable :: dimension(:)   ! number of cells in each direction
     real(8), allocatable :: lower_left(:)  ! lower-left corner of mesh
     real(8), allocatable :: upper_right(:) ! upper-right corner of mesh

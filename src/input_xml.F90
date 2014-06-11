@@ -554,19 +554,20 @@ contains
       end if
       
       ! Figure out if user set to equal vol fracs or the approximation
-      type = ''
-      if (check_for_node(node_ufs, "ufs_method")) &
-          call get_node_value(node_ufs, "ufs_method", type)
-      call lower_case(type)
-      select case (trim(type))
-      case ('equal')
-        ufs_approx=.false. ! default will be flase in global
-      case ('approximation')
-        ufs_approx=.true.
-      case default
-        message = "Invalid option for ufs method"
-        call fatal_error()
-      end select
+      if (check_for_node(node_ufs, "ufs_method")) then
+        type = ''
+        call get_node_value(node_ufs, "ufs_method", type)
+        call lower_case(type)
+        select case (trim(type))
+        case ('equal')
+          ufs_approx=.false. ! default will be flase in global
+        case ('approximation')
+          ufs_approx=.true.
+        case default
+          message = "Invalid option for ufs method"
+          call fatal_error()
+        end select
+      end if
 
       ! Allocate mesh object and coordinates on mesh
       allocate(ufs_mesh)
@@ -596,18 +597,21 @@ contains
       ! Calculate width
       ufs_mesh % width = (ufs_mesh % upper_right - &
            ufs_mesh % lower_left) / ufs_mesh % dimension
-
-      ! Calculate volume fraction of each cell
-      ufs_mesh % volume_frac = ONE/real(product(ufs_mesh % dimension),8)
-
-       ! ^^ change this to a logical related to the new select case of "equal" or "approximation" JLH
-
+      
       ! Turn on uniform fission source weighting
       ufs = .true.
 
-      ! Allocate source_frac
+      ! Allocate source_frac and volume_frac
       allocate(source_frac(1, ufs_mesh % dimension(1), &
            ufs_mesh % dimension(2), ufs_mesh % dimension(3)))
+      allocate(volume_frac(1, ufs_mesh % dimension(1), &
+           ufs_mesh % dimension(2), ufs_mesh % dimension(3)))
+      
+      ! If ufs method is to use equal volume fractions, set them here
+      if (.not. ufs_approx) then
+        volume_frac = ONE/real(product(ufs_mesh % dimension),8)
+        print*, "UFS method selected is equal volume fraction"
+      end if
     end if
 
     ! Check if the user has specified to write state points

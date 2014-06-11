@@ -19,7 +19,12 @@ contains
     integer   :: particlenum !Number of particles to run simulation
 
     !Pull in the data from the user on the mesh size and how many particles to run
-
+    ufs_mesh % lower_left(3)
+    ufs_mesh % upper_right(3)
+    ufs_mesh % width(3)
+    ufs_mesh % dimension(3)
+    ufs_vol_res
+    
     !Allocate arrays
 
     !Loop over particles
