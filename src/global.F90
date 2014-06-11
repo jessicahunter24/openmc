@@ -185,6 +185,8 @@ module global
   logical :: ufs = .false.
   type(StructuredMesh), pointer :: ufs_mesh => null()
   real(8), allocatable :: source_frac(:,:,:,:)
+  real(8), allocatable :: volume_frac(:,:,:,:) ! JLH ufs 
+  integer(8) :: ufs_vol_res = 0 ! JLH ufs num of rand loc for vk approximation
 
   ! Write source at end of simulation
   logical :: source_separate = .false.

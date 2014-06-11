@@ -552,6 +552,21 @@ contains
         message = "Dimension of UFS mesh must be given as three integers."
         call fatal_error()
       end if
+      
+      ! Figure out if user set to equal vol fracs or the approximation
+      type = ''
+      if (check_for_node(node_ufs, "ufs_method")) &
+          call get_node_value(node_ufs, "ufs_method", type)
+      call lower_case(type)
+      select case (trim(type))
+      case ('equal')
+        ufs_approx=.false. ! default will be flase in global
+      case ('approximation')
+        ufs_approx=.true.
+      case default
+        message = "Invalid option for ufs method"
+        call fatal_error()
+      end select
 
       ! Allocate mesh object and coordinates on mesh
       allocate(ufs_mesh)
@@ -569,6 +584,7 @@ contains
       ! Copy values
       call get_node_array(node_ufs, "lower_left", ufs_mesh % lower_left)
       call get_node_array(node_ufs, "upper_right", ufs_mesh % upper_right)
+      call get_node_array(node_ufs, "resolution", ufs_vol_res) ! JLH ufs how many locations to throw at the mesh      
 
       ! Check on values provided
       if (.not. all(ufs_mesh % upper_right > ufs_mesh % lower_left)) then
@@ -583,6 +599,8 @@ contains
 
       ! Calculate volume fraction of each cell
       ufs_mesh % volume_frac = ONE/real(product(ufs_mesh % dimension),8)
+
+       ! ^^ change this to a logical related to the new select case of "equal" or "approximation" JLH
 
       ! Turn on uniform fission source weighting
       ufs = .true.

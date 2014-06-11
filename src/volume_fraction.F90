@@ -18,6 +18,28 @@ contains
 
     integer   :: particlenum !Number of particles to run simulation
 
+    !Pull in the data from the user on the mesh size and how many particles to run
+
+    !Allocate arrays
+
+    !Loop over particles
+
+      !Random location
+
+      !Identify cell
+
+      !Identify material
+
+      !Check if fissionable
+
+      !If not fissionable, return to next particle, else sort into user defined UFS mesh
+    
+    !Find volume fractions (math)
+    
+    !write out to volume fraction xml file 
+
+    !Print to user that it has been completed.
+
 
   end subroutine run_volfrac()
 

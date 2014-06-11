@@ -847,7 +847,7 @@ contains
       end if
 
       if (source_frac(1,ijk(1),ijk(2),ijk(3)) /= ZERO) then
-        weight = ufs_mesh % volume_frac / source_frac(1,ijk(1),ijk(2),ijk(3))
+        weight = volume_frac(1,ijk(1), ijk(2), ijk(3)) / source_frac(1,ijk(1),ijk(2),ijk(3))
       else
         weight = ONE
       end if
