@@ -37,7 +37,9 @@ contains
     do i = 1, ufs_vol_res
 
       !Random location
-      xyz(1)=prn()*ufs_mesh % width(1) + ufs_mesh % lower_left(1)
+      xyz(1) = prn()*(ufs_mesh % width(1)*ufs_mesh % dimension(1)) + ufs_mesh % lower_left(1)
+      xyz(2) = prn()*(ufs_mesh % width(2)*ufs_mesh % dimension(2)) + ufs_mesh % lower_left(2)
+      xyz(3) = prn()*(ufs_mesh % width(3)*ufs_mesh % dimension(3)) + ufs_mesh % lower_left(3)
 
       !Identify cell
 
