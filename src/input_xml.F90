@@ -1873,7 +1873,7 @@ contains
       end if
 
       ! Set volume fraction
-      m % volume_frac = ONE/real(product(m % dimension),8)
+      ! m % volume_frac = ONE/real(product(m % dimension),8)
 
       ! Add mesh to dictionary
       call mesh_dict % add_key(m % id, i)

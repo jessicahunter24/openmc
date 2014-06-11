@@ -757,7 +757,7 @@ contains
       ! distributed so that effectively the production of fission sites is not
       ! biased
 
-      source_frac = ufs_mesh % volume_frac
+      source_frac = ONE/real(product(ufs_mesh % dimension),8) 
 
     else
       ! count number of source sites in each ufs mesh cell
