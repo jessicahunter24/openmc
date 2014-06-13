@@ -31,6 +31,7 @@ contains
     logical         :: in_mesh ! whether point specified is in mesh
     integer         :: volfrac_dim(4) ! dimensions of the volume fraction array
     type(Particle)  :: p
+    integer         :: i ! counter variable
     logical         :: found_cell
     type(Cell), pointer :: c => null()
     type(Material), pointer :: m => null()
@@ -80,6 +81,8 @@ contains
         volume_frac(1, ijk(1), ijk(2), ijk(3)) = volume_frac(1, ijk(1), ijk(2), ijk(3)) + 1
       end if
     
+    end do
+    
     !Find volume fractions (math)
     volume_frac=volume_frac/(sum(volume_frac))
 
@@ -99,22 +102,56 @@ contains
     
   subroutine write_volfrac_xml()
 
+    character(len=11) :: node_tag_open
+    character(len=12) :: node_tag_close
+    integer           :: z ! counter for z loop
+    integer           :: y ! counter for y loop
+    integer           :: i ! counter for inner loops
+    integer           :: xdim ! shorthand for dimensions
+    integer           :: ydim 
+    integer           :: zdim
+
+    ! Define some variables for readability
+    xdim = ufs_mesh % dimension(1)  ! number of data in x direction
+    ydim = ufs_mesh % dimension(2)  ! " y "
+    zdim = ufs_mesh % dimension(3)  ! "z "
+
     ! Open the file for writing
-    open(UNIT=UNIT_VOLFRAC, FILE='volume_fractions.xml', ACTION='readwrite',STATUS='replace', ACCESS='stream')
+    open(UNIT=UNIT_VOLFRAC, FILE='volume_fractions.xml', ACTION='readwrite', &
+         STATUS='replace', ACCESS='stream')
+
     ! Write header to file
+    WRITE(UNIT_VOLFRAC, 100)
+    100 FORMAT(' ','<volume_fracions>')
+    
     ! Write node name
+    node_tag_open='<fractions>'
+    WRITE(UNIT_VOLFRAC, 110) node_tag_open
+    110 FORMAT(' ', A13)
+    
     ! Write data
+    do z = 1, zdim
+      
+      do y = 1, ydim
+        ! Write out entire horizontal line at once
+        WRITE(UNIT_VOLFRAC, '(1X, f12.5, (8.5))') &
+             volume_frac(1,1,y,z), (volume_frac(1,i,y,z), i=2, xdim)
+      end do
+      ! Add a line between Z to show XvsY slice
+      WRITE(UNIT_VOLFRAC, '(A)') new_line(' ') ! 2005 fortran?
+    end do 
+    
+    ! Write closing node tag
+    node_tag_close='</fractions>'
+    WRITE(UNIT_VOLFRAC, 190) node_tag_close
+    190 FORMAT(' ', A14)
+
     ! Write closing tag
+    WRITE(UNIT_VOLFRAC, 200) 
+    200 FORMAT(' ', '</volume_fractions>')
     
     ! Close the file
     close(UNIT=UNIT_VOLFRAC)
-
-    !create the file
-    ! call file_create( , "volume_fractions.xml")
-    !volfrac_dim(1) = 1
-    !volfrac_dim(2:4) = ufs_mesh % dimension
-    !call write_double_3Darray( , datavarname, "data name", length(4))
-    !call file_open( , "Volume_fractions.xml", "w)" !also r for reeeeeead ;)  
 
   end subroutine write_volfrac_xml()
 
