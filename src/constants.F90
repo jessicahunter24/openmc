@@ -370,6 +370,7 @@ module constants
   integer, parameter :: UNIT_XS       = 14 ! unit # for writing xs summary file
   integer, parameter :: UNIT_PARTICLE = 15 ! unit # for writing particle restart
   integer, parameter :: UNIT_OUTPUT   = 16 ! unit # for writing output
+  integer, parameter :: UNIT_VOLFRAC  = 17 ! unit # for writing volume fraction file JLH ufs
 
   !=============================================================================
   ! CMFD CONSTANTS

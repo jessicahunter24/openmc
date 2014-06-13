@@ -1,6 +1,7 @@
 module volume_fraction
 
   use global
+  use constants
   use mesh,             only : get_mesh_indices
   use random_lcg,       only : prn, ! set_particle_seed
   use geometry,         only : find_cell, check_cell_overlap
@@ -9,6 +10,7 @@ module volume_fraction
   use material_header,  only : Material
   use output,           only : write_message
   use error,            only : fatal_error
+  use output_interface
 
   implicit none
 
@@ -27,6 +29,7 @@ contains
     real(8)         :: xyz(3)  ! random location in geometry
     integer         :: ijk(3)  ! indces in ufs mesh
     logical         :: in_mesh ! whether point specified is in mesh
+    integer         :: volfrac_dim(4) ! dimensions of the volume fraction array
     type(Particle)  :: p
     logical         :: found_cell
     type(Cell), pointer :: c => null()
@@ -80,11 +83,39 @@ contains
     !Find volume fractions (math)
     volume_frac=volume_frac/(sum(volume_frac))
 
-    !write out to volume fraction xml file 
-
-    !Print to user that it has been completed.
-     ! see header above
+    !Write out to xml file
+    call write_volfrac_xml()
+ 
+    !print out to user that it is complete
+    message = 'Volume fraction file has been written'
+    call write_message(1)
 
   end subroutine run_volfrac()
+
+!========================================================================================
+! write_volfrac_xml() creates the xml file containging the volume fractions
+! that can be used as an input when the ufs method chosen is approximation
+!========================================================================================
+    
+  subroutine write_volfrac_xml()
+
+    ! Open the file for writing
+    open(UNIT=UNIT_VOLFRAC, FILE='volume_fractions.xml', ACTION='readwrite',STATUS='replace', ACCESS='stream')
+    ! Write header to file
+    ! Write node name
+    ! Write data
+    ! Write closing tag
+    
+    ! Close the file
+    close(UNIT=UNIT_VOLFRAC)
+
+    !create the file
+    ! call file_create( , "volume_fractions.xml")
+    !volfrac_dim(1) = 1
+    !volfrac_dim(2:4) = ufs_mesh % dimension
+    !call write_double_3Darray( , datavarname, "data name", length(4))
+    !call file_open( , "Volume_fractions.xml", "w)" !also r for reeeeeead ;)  
+
+  end subroutine write_volfrac_xml()
 
 end module volume_fraction
