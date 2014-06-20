@@ -230,6 +230,7 @@ main.o: global.o
 main.o: initialize.o
 main.o: particle_restart.o
 main.o: plot.o
+main.o: volume_fraction.o
 
 math.o: constants.o
 math.o: random_lcg.o
@@ -390,6 +391,18 @@ tracking.o: tally.o
 tracking.o: track_output.o
 
 vector_header.o: constants.o
+
+volume_fraction.o: global.o
+volume_fraction.o: constants.o
+volume_fraction.o: mesh.o
+volume_fraction.o: random_lcg.o
+volume_fraction.o: geometry.o
+volume_fraction.o: geometry_header.o
+volume_fraction.o: particle_header.o
+volume_fraction.o: material_header.o
+volume_fraction.o: output.o
+volume_fraction.o: error.o
+volume_fraction.o: output_interface.o
 
 xml_interface.o: constants.o
 xml_interface.o: error.o

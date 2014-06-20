@@ -1473,21 +1473,21 @@ contains
     if (restart_run) then
       if (restart_batch < n_inactive) then
         speed_inactive = real(n_particles * (n_inactive - restart_batch) * &
-             gen_per_batch) / time_inactive % elapsed
+             gen_per_batch) / (time_inactive % elapsed + 1E-8)
         speed_active = real(n_particles * n_active * gen_per_batch) / &
-           time_active % elapsed
+           (time_active % elapsed + 1E-8)
       else
         speed_inactive = ZERO
         speed_active = real(n_particles * (n_batches - restart_batch) * &
-             gen_per_batch) / time_active % elapsed
+             gen_per_batch) / (time_active % elapsed + 1E-8)
       end if
     else
       if (n_inactive > 0) then
         speed_inactive = real(n_particles * n_inactive * gen_per_batch) / &
-             time_inactive % elapsed
+             (time_inactive % elapsed + 1E-8) ! JLH ufs debug
       end if
       speed_active = real(n_particles * n_active * gen_per_batch) / &
-           time_active % elapsed
+           (time_active % elapsed + 1E-8) ! JLH ufs debug
     end if
 
     ! display calculation rate

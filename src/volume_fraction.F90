@@ -3,7 +3,7 @@ module volume_fraction
   use global
   use constants
   use mesh,             only : get_mesh_indices
-  use random_lcg,       only : prn, ! set_particle_seed
+  use random_lcg,       only : prn ! set_particle_seed
   use geometry,         only : find_cell, check_cell_overlap
   use geometry_header,  only : Cell, BASE_UNIVERSE 
   use particle_header,  only : deallocate_coord, Particle
@@ -37,7 +37,7 @@ contains
     type(Material), pointer :: m => null()
     
     !Allocate and initialize particle
-     call p % intialize()
+     call p % initialize()
      p % coord % uvw = (/ 0.5, 0.5, 0.5 /)
      p % coord % universe = BASE_UNIVERSE
 
@@ -46,7 +46,7 @@ contains
 
     !Loop over particles
     do i = 1, ufs_vol_res
-
+      
       !Random location
       xyz(1) = prn()*(ufs_mesh % width(1)*ufs_mesh % dimension(1)) + ufs_mesh % lower_left(1)
       xyz(2) = prn()*(ufs_mesh % width(2)*ufs_mesh % dimension(2)) + ufs_mesh % lower_left(2)
@@ -61,15 +61,14 @@ contains
       if (.not. found_cell) then
         print*, 'Overlap found, adding particle' 
         ufs_vol_res = ufs_vol_res + 1
-        return
+        cycle  
       else !Cell is found, then figure out material id of celli
         c => cells(p % coord % cell)
         m => materials( c % material)
       end if
-
       !If not fissionable, return to next particle, else sort into user defined UFS mesh
       if (.not. m % mat_fissionable) then
-        return
+        cycle
       else
         ! Find location in UFS mesh
         call get_mesh_indices(ufs_mesh, xyz, ijk, in_mesh)
@@ -93,7 +92,7 @@ contains
     message = 'Volume fraction file has been written'
     call write_message(1)
 
-  end subroutine run_volfrac()
+  end subroutine run_volfrac
 
 !========================================================================================
 ! write_volfrac_xml() creates the xml file containging the volume fractions
@@ -118,11 +117,11 @@ contains
 
     ! Open the file for writing
     open(UNIT=UNIT_VOLFRAC, FILE='volume_fractions.xml', ACTION='readwrite', &
-         STATUS='replace', ACCESS='stream')
+         STATUS='replace')
 
     ! Write header to file
     WRITE(UNIT_VOLFRAC, 100)
-    100 FORMAT(' ','<volume_fracions>')
+    100 FORMAT(' ','<volume_fractions>')
     
     ! Write node name
     node_tag_open='<fractions>'
@@ -134,7 +133,7 @@ contains
       
       do y = 1, ydim
         ! Write out entire horizontal line at once
-        WRITE(UNIT_VOLFRAC, '(1X, f12.5, (8.5))') &
+        WRITE(UNIT_VOLFRAC, '(1X, f12.5, (f8.5))') &
              volume_frac(1,1,y,z), (volume_frac(1,i,y,z), i=2, xdim)
       end do
       ! Add a line between Z to show XvsY slice
@@ -153,6 +152,6 @@ contains
     ! Close the file
     close(UNIT=UNIT_VOLFRAC)
 
-  end subroutine write_volfrac_xml()
+  end subroutine write_volfrac_xml
 
 end module volume_fraction

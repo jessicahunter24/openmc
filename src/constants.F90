@@ -360,7 +360,7 @@ module constants
        MODE_FIXEDSOURCE = 1, & ! Fixed source mode
        MODE_EIGENVALUE  = 2, & ! K eigenvalue mode
        MODE_PLOTTING    = 3, & ! Plotting mode
-       MODE_PARTICLE    = 4    ! Particle restart mode
+       MODE_PARTICLE    = 4, & ! Particle restart mode
        MODE_VOLUMEFRAC  = 5    ! JLH ufs Adding run mode to constants list
 
   ! Unit numbers

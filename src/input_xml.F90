@@ -585,7 +585,7 @@ contains
       ! Copy values
       call get_node_array(node_ufs, "lower_left", ufs_mesh % lower_left)
       call get_node_array(node_ufs, "upper_right", ufs_mesh % upper_right)
-      call get_node_array(node_ufs, "resolution", ufs_vol_res) ! JLH ufs how many locations to throw at the mesh      
+      call get_node_value(node_ufs, "resolution", ufs_vol_res) ! JLH ufs how many locations to throw at the mesh      
 
       ! Check on values provided
       if (.not. all(ufs_mesh % upper_right > ufs_mesh % lower_left)) then
@@ -1341,6 +1341,15 @@ contains
         message = "Must specify density element in material " // &
                   trim(to_str(mat % id))
         call fatal_error()
+      end if
+
+      ! Get pointer to matfissionable pointer JLH ufs
+      if (check_for_node(node_mat, "fissionable")) then
+        call get_node_value(node_mat, "fissionable", temp_str)
+        call lower_case(temp_str)
+        if (trim(temp_str) == 'true' .or. trim(temp_str) == '1') then
+          mat % mat_fissionable = .true.
+        end if
       end if
 
       ! Initialize value to zero

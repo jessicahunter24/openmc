@@ -10,7 +10,7 @@ xml_lib = -Lxml/lib -lxml
 #===============================================================================
 
 COMPILER = intel
-DEBUG    = no
+DEBUG    = yes
 PROFILE  = no
 OPTIMIZE = yes
 MPI      = yes

@@ -7,7 +7,7 @@ program main
   use global
   use initialize,        only: initialize_run
   use particle_restart,  only: run_particle_restart
-  use plot,              only: run_ploti
+  use plot,              only: run_plot
   use volume_fraction,   only: run_volfrac
 
   implicit none
