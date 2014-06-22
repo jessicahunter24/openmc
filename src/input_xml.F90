@@ -2870,6 +2870,75 @@ contains
   end subroutine read_plots_xml
 
 !===============================================================================
+! READ_VOLFRAC_XML reads in the volume_fractions.xml file, and pulls out the 
+! aray of fractions, renormalizes it, and fills the volume_frac vector.
+!===============================================================================
+  subroutine read_volfrac_xml()
+
+    logical :: file_exists  
+    character(MAX_LINE_LEN) :: filename
+    type(Node), pointer :: doc              => null()
+    integer :: i
+    integer :: j
+    integer :: k
+    real(8), allocatable :: darray(:)
+    real(8), allocatable :: temp_arr(:,:,:)
+
+    ! Display output message
+    message = "Reading volume fractions XML file..."
+    call write_message(5)
+
+    ! Check if volume_fractions.xml exists
+    filename = trim(path_input) // "volume_fractions.xml"
+    inquire(FILE=filename, EXIST=file_exists)
+    if (.not. file_exists) then
+      message = "Volume fractions XML file ' " // trim(filename) // "' does not exist!"
+      call fatal_error()
+    end if
+  
+    ! Parse volume_fractions.xml file
+    call open_xmldoc(doc, filename)
+
+    ! Check for fractions node
+    if (.not. check_for_node(doc, "fractions")) then
+      message = "Need to specify fractions in volume_fractions.xml."
+      call fatal_error()
+    else 
+      ! check to see if array given is correct size
+      if (get_arraysize_integer(doc, "fractions") /= product(ufs_mesh % dimension)) then
+        message = 'FATAL=> fraction array given does not match UFS dimensions'
+        call fatal_error()
+      end if
+      ! If it is correct size, read it in
+      ! allocate a 1D array to take in all the fractions
+      allocate(darray(get_arraysize_double(doc, "fractions")))
+      ! read in to the 1D array
+      call get_node_array(doc, "fractions", darray)
+      ! allocate a 3D array for it to be reshaped into the size of the UFS mesh
+      allocate(temp_arr(ufs_mesh % dimension(1), ufs_mesh % dimension(2), &
+                        ufs_mesh % dimension(3)))
+      ! reshape the 1D input into the 3D array
+      temp_arr = reshape(darray, (ufs_mesh % dimension(1:3)))
+      !deallocate the 1D array now that you have it in the proper dimensions
+      deallocate(darray)
+      ! normalize 3D input in case it doesn't already sum to 1
+      temp_arr=temp_arr/sum(temp_arr)
+      ! Fill volume fraction array with correct sized array
+      do i = 1, ufs_mesh % dimension(1)
+        do j = 1, ufs_mesh % dimension(2)
+          do k= 1, ufs_mesh % dimension(3)
+            volume_frac(1, i, j, k)=temp_arr(i, j, k)
+          end do
+        end do
+      end do
+      print*, "Volume fraction at location (1, 2, 1) is: ", volume_frac(1, 1, 2, 1)
+      ! deallocate temporary array
+      deallocate(temp_arr)
+    end if
+
+  end subroutine read_volfrac_xml
+
+!===============================================================================
 ! READ_CROSS_SECTIONS_XML reads information from a cross_sections.xml file. This
 ! file contains a listing of the ACE cross sections that may be used.
 !===============================================================================

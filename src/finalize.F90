@@ -27,7 +27,7 @@ contains
     ! Start finalization timer
     call time_finalize % start()
 
-    if (run_mode /= MODE_PLOTTING .and. run_mode /= MODE_PARTICLE) then
+    if (run_mode /= MODE_PLOTTING .and. run_mode /= MODE_PARTICLE .and. run_mode /= MODE_VOLUMEFRAC) then
       ! Calculate statistics for tallies and write to tallies.out
       if (master) then
         if (n_realizations > 1) call tally_statistics()
@@ -47,7 +47,7 @@ contains
     call time_finalize % stop()
     call time_total % stop()
     if (master .and. (run_mode /= MODE_PLOTTING .and. &
-         run_mode /= MODE_PARTICLE)) then
+         run_mode /= MODE_PARTICLE .and. run_mode /=MODE_VOLUMEFRAC)) then
       call print_runtime()
       call print_results()
       if (check_overlaps) call print_overlap_check()
