@@ -32,7 +32,7 @@ module constants
   real(8), parameter :: CONFIDENCE_LEVEL = 0.95_8
 
   ! Used for surface current tallies
-  real(8), parameter :: TINY_BIT = 1e-8_8
+  real(8), parameter :: TINY_BIT = 2e-8_8
 
   ! User for precision in geometry
   real(8), parameter :: FP_PRECISION = 1e-14_8

@@ -585,7 +585,11 @@ contains
       ! Copy values
       call get_node_array(node_ufs, "lower_left", ufs_mesh % lower_left)
       call get_node_array(node_ufs, "upper_right", ufs_mesh % upper_right)
-      call get_node_value(node_ufs, "resolution", ufs_vol_res) ! JLH ufs how many locations to throw at the mesh      
+      
+      !Get resolution if using approximation
+      if(ufs_approx) then
+        call get_node_value(node_ufs, "resolution", ufs_vol_res) ! JLH ufs how many locations to throw at the mesh
+      end if      
 
       ! Check on values provided
       if (.not. all(ufs_mesh % upper_right > ufs_mesh % lower_left)) then
@@ -610,7 +614,7 @@ contains
       ! If ufs method is to use equal volume fractions, set them here
       if (.not. ufs_approx) then
         volume_frac = ONE/real(product(ufs_mesh % dimension),8)
-        print*, "UFS method selected is equal volume fraction"
+        if (master) print*, "UFS method selected is equal volume fraction"
       end if
     end if
 
@@ -751,7 +755,8 @@ contains
     integer :: n_cells_in_univ
     integer :: coeffs_reqd
     integer :: mid
-    integer :: temp_int_array3(3)
+    !integer :: temp_int_array3(3)
+    real(8) :: temp_rl_array3(3) !JLH debug rotations
     integer, allocatable :: temp_int_array(:)
     real(8) :: phi, theta, psi
     logical :: file_exists
@@ -907,10 +912,10 @@ contains
         end if
 
         ! Copy rotation angles in x,y,z directions
-        call get_node_array(node_cell, "rotation", temp_int_array3)
-        phi   = -temp_int_array3(1) * PI/180.0_8
-        theta = -temp_int_array3(2) * PI/180.0_8
-        psi   = -temp_int_array3(3) * PI/180.0_8
+        call get_node_array(node_cell, "rotation", temp_rl_array3)
+        phi   = -temp_rl_array3(1) * PI/180.0_8
+        theta = -temp_rl_array3(2) * PI/180.0_8
+        psi   = -temp_rl_array3(3) * PI/180.0_8
 
         ! Calculate rotation matrix based on angles given
         allocate(c % rotation(3,3))

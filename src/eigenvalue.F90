@@ -325,6 +325,12 @@ contains
     ! Allocate temporary source bank
     index_temp = 0_8
     if (.not. allocated(temp_sites)) allocate(temp_sites(3*work))
+    
+    !JLH debug
+    !if(master) print*, "temp sites has this many spots", 3*work
+    !if(master) print*, "n_particles equals", n_particles
+    !if(master) print*, "total equals", total     
+    !if(master) print*, "n_bank equals", n_bank
 
     do i = 1, int(n_bank,4)
 
