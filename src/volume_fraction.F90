@@ -10,7 +10,12 @@ module volume_fraction
   use material_header,  only : Material
   use output,           only : write_message
   use error,            only : fatal_error
+  use initialize,       only : calculate_work
   use output_interface
+
+#ifdef MPI
+  use mpi
+#endif
 
   implicit none
 
@@ -32,6 +37,7 @@ contains
     integer         :: volfrac_dim(4) ! dimensions of the volume fraction array
     type(Particle)  :: p
     integer         :: i ! counter variable
+    integer         :: num_elements
     logical         :: found_cell
     type(Cell), pointer :: c => null()
     type(Material), pointer :: m => null()
@@ -41,11 +47,15 @@ contains
      p % coord % uvw = (/ 0.5, 0.5, 0.5 /)
      p % coord % universe = BASE_UNIVERSE
 
-    ! Set particle seed
-    !call set_particle_seed()
+    !Calculate how many elements in vol_frac
+    num_elements=product(ufs_mesh % dimension)
+
+    ! Calculate work on each processor
+    n_particles=ufs_vol_res
+    call calculate_work()
 
     !Loop over particles
-    do i = 1, ufs_vol_res
+    do i = 1, work
       
       !Random location
       xyz(1) = prn()*(ufs_mesh % width(1)*ufs_mesh % dimension(1)) + ufs_mesh % lower_left(1)
@@ -77,20 +87,31 @@ contains
           call fatal_error()
         end if
         ! Bank it into the volume fraction mesh
-        volume_frac(1, ijk(1), ijk(2), ijk(3)) = volume_frac(1, ijk(1), ijk(2), ijk(3)) + 1
+        volume_frac(1, ijk(1), ijk(2), ijk(3)) = volume_frac(1, ijk(1), ijk(2), ijk(3)) + 1.0
       end if
     
     end do
-    
-    !Find volume fractions (math)
-    volume_frac=volume_frac/(sum(volume_frac))
 
-    !Write out to xml file
-    call write_volfrac_xml()
+    if(master) then
+#ifdef MPI
+      call MPI_REDUCE(MPI_IN_PLACE, volume_frac, num_elements,MPI_REAL8, MPI_SUM,0,&
+                    MPI_COMM_WORLD, mpi_err)
+    else
+      call MPI_REDUCE(volume_frac, 0, num_elements, MPI_REAL8, MPI_SUM,0,&
+                    MPI_COMM_WORLD, mpi_err)
+    end if   
+#endif    
+    !Find volume fractions (math)
+    if(master) then
+      volume_frac=volume_frac/(sum(volume_frac))
+
+      !Write out to xml file
+      call write_volfrac_xml()
  
-    !print out to user that it is complete
-    message = 'Volume fraction file has been written'
-    call write_message(1)
+      !print out to user that it is complete
+      message = 'Volume fraction file has been written'
+      call write_message(1)
+    end if
 
   end subroutine run_volfrac
 

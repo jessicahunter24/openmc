@@ -97,7 +97,7 @@ contains
     ! neighboring cells for efficient tracking
     call neighbor_lists()
 
-    if (run_mode /= MODE_PLOTTING) then
+    if (run_mode /= MODE_PLOTTING .and. run_mode /=MODE_VOLUMEFRAC) then
       ! With the AWRs from the xs_listings, change all material specifications
       ! so that they contain atom percents summing to 1
       call normalize_ao()
