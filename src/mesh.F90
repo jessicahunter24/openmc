@@ -294,36 +294,40 @@ contains
     ! Set default value for intersects
     intersects = .false.
 
-    ! Check if line intersects left surface -- calculate the intersection point
-    ! y
-    yi = y0 + (xm0 - x0) * (y1 - y0) / (x1 - x0)
-    if (yi >= ym0 .and. yi < ym1) then
-      intersects = .true.
-      return
+    if (x1 /= x0) then
+      ! Check if line intersects left surface -- calculate the intersection
+      ! point y
+      yi = y0 + (xm0 - x0) * (y1 - y0) / (x1 - x0)
+      if (yi >= ym0 .and. yi < ym1) then
+        intersects = .true.
+        return
+      end if
+
+      ! Check if line intersects right surface -- calculate the intersection
+      ! point y
+      yi = y0 + (xm1 - x0) * (y1 - y0) / (x1 - x0)
+      if (yi >= ym0 .and. yi < ym1) then
+        intersects = .true.
+        return
+      end if
     end if
 
-    ! Check if line intersects back surface -- calculate the intersection point
-    ! x
-    xi = x0 + (ym0 - y0) * (x1 - x0) / (y1 - y0)
-    if (xi >= xm0 .and. xi < xm1) then
-      intersects = .true.
-      return
-    end if
+    if (y1 /= y0) then
+      ! Check if line intersects back surface -- calculate the intersection
+      ! point x
+      xi = x0 + (ym0 - y0) * (x1 - x0) / (y1 - y0)
+      if (xi >= xm0 .and. xi < xm1) then
+        intersects = .true.
+        return
+      end if
 
-    ! Check if line intersects right surface -- calculate the intersection
-    ! point y
-    yi = y0 + (xm1 - x0) * (y1 - y0) / (x1 - x0)
-    if (yi >= ym0 .and. yi < ym1) then
-      intersects = .true.
-      return
-    end if
-
-    ! Check if line intersects front surface -- calculate the intersection point
-    ! x
-    xi = x0 + (ym1 - y0) * (x1 - x0) / (y1 - y0)
-    if (xi >= xm0 .and. xi < xm1) then
-      intersects = .true.
-      return
+      ! Check if line intersects front surface -- calculate the intersection
+      ! point x
+      xi = x0 + (ym1 - y0) * (x1 - x0) / (y1 - y0)
+      if (xi >= xm0 .and. xi < xm1) then
+        intersects = .true.
+        return
+      end if
     end if
 
   end function mesh_intersects_2d
@@ -364,58 +368,64 @@ contains
     ! Set default value for intersects
     intersects = .false.
 
-    ! Check if line intersects left surface -- calculate the intersection point
-    ! (y,z)
-    yi = y0 + (xm0 - x0) * (y1 - y0) / (x1 - x0)
-    zi = z0 + (xm0 - x0) * (z1 - z0) / (x1 - x0)
-    if (yi >= ym0 .and. yi < ym1 .and. zi >= zm0 .and. zi < zm1) then
-      intersects = .true.
-      return
+    if (x1 /= x0) then
+      ! Check if line intersects left/right surface -- calculate the
+      ! intersection point (y,z)
+      yi = y0 + (xm0 - x0) * (y1 - y0) / (x1 - x0)
+      zi = z0 + (xm0 - x0) * (z1 - z0) / (x1 - x0)
+      if (yi >= ym0 .and. yi < ym1 .and. zi >= zm0 .and. zi < zm1) then
+        intersects = .true.
+        return
+      end if
+
+      ! Check if line intersects right surface -- calculate the intersection
+      ! point (y,z)
+      yi = y0 + (xm1 - x0) * (y1 - y0) / (x1 - x0)
+      zi = z0 + (xm1 - x0) * (z1 - z0) / (x1 - x0)
+      if (yi >= ym0 .and. yi < ym1 .and. zi >= zm0 .and. zi < zm1) then
+        intersects = .true.
+        return
+      end if
     end if
 
-    ! Check if line intersects back surface -- calculate the intersection point
-    ! (x,z)
-    xi = x0 + (ym0 - y0) * (x1 - x0) / (y1 - y0)
-    zi = z0 + (ym0 - y0) * (z1 - z0) / (y1 - y0)
-    if (xi >= xm0 .and. xi < xm1 .and. zi >= zm0 .and. zi < zm1) then
-      intersects = .true.
-      return
+    if (y1 /= y0) then
+      ! Check if line intersects back surface -- calculate the intersection
+      ! point (x,z)
+      xi = x0 + (ym0 - y0) * (x1 - x0) / (y1 - y0)
+      zi = z0 + (ym0 - y0) * (z1 - z0) / (y1 - y0)
+      if (xi >= xm0 .and. xi < xm1 .and. zi >= zm0 .and. zi < zm1) then
+        intersects = .true.
+        return
+      end if
+
+      ! Check if line intersects front surface -- calculate the intersection
+      ! point (x,z)
+      xi = x0 + (ym1 - y0) * (x1 - x0) / (y1 - y0)
+      zi = z0 + (ym1 - y0) * (z1 - z0) / (y1 - y0)
+      if (xi >= xm0 .and. xi < xm1 .and. zi >= zm0 .and. zi < zm1) then
+        intersects = .true.
+        return
+      end if
     end if
 
-    ! Check if line intersects bottom surface -- calculate the intersection
-    ! point (x,y)
-    xi = x0 + (zm0 - z0) * (x1 - x0) / (z1 - z0)
-    yi = y0 + (zm0 - z0) * (y1 - y0) / (z1 - z0)
-    if (xi >= xm0 .and. xi < xm1 .and. yi >= ym0 .and. yi < ym1) then
-      intersects = .true.
-      return
-    end if
+    if (z1 /= z0) then
+      ! Check if line intersects bottom surface -- calculate the intersection
+      ! point (x,y)
+      xi = x0 + (zm0 - z0) * (x1 - x0) / (z1 - z0)
+      yi = y0 + (zm0 - z0) * (y1 - y0) / (z1 - z0)
+      if (xi >= xm0 .and. xi < xm1 .and. yi >= ym0 .and. yi < ym1) then
+        intersects = .true.
+        return
+      end if
 
-    ! Check if line intersects right surface -- calculate the intersection point
-    ! (y,z)
-    yi = y0 + (xm1 - x0) * (y1 - y0) / (x1 - x0)
-    zi = z0 + (xm1 - x0) * (z1 - z0) / (x1 - x0)
-    if (yi >= ym0 .and. yi < ym1 .and. zi >= zm0 .and. zi < zm1) then
-      intersects = .true.
-      return
-    end if
-
-    ! Check if line intersects front surface -- calculate the intersection point
-    ! (x,z)
-    xi = x0 + (ym1 - y0) * (x1 - x0) / (y1 - y0)
-    zi = z0 + (ym1 - y0) * (z1 - z0) / (y1 - y0)
-    if (xi >= xm0 .and. xi < xm1 .and. zi >= zm0 .and. zi < zm1) then
-      intersects = .true.
-      return
-    end if
-
-    ! Check if line intersects top surface -- calculate the intersection point
-    ! (x,y)
-    xi = x0 + (zm1 - z0) * (x1 - x0) / (z1 - z0)
-    yi = y0 + (zm1 - z0) * (y1 - y0) / (z1 - z0)
-    if (xi >= xm0 .and. xi < xm1 .and. yi >= ym0 .and. yi < ym1) then
-      intersects = .true.
-      return
+      ! Check if line intersects top surface -- calculate the intersection point
+      ! (x,y)
+      xi = x0 + (zm1 - z0) * (x1 - x0) / (z1 - z0)
+      yi = y0 + (zm1 - z0) * (y1 - y0) / (z1 - z0)
+      if (xi >= xm0 .and. xi < xm1 .and. yi >= ym0 .and. yi < ym1) then
+        intersects = .true.
+        return
+      end if
     end if
 
   end function mesh_intersects_3d
