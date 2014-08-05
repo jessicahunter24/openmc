@@ -2936,7 +2936,6 @@ contains
           end do
         end do
       end do
-      print*, "Volume fraction at location (1, 2, 1) is: ", volume_frac(1, 1, 2, 1)
       ! deallocate temporary array
       deallocate(temp_arr)
     end if
