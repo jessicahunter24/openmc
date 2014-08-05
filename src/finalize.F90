@@ -46,6 +46,7 @@ contains
     ! Stop timers and show timing statistics
     call time_finalize % stop()
     call time_total % stop()
+    if (master .and. (run_mode == MODE_VOLUMEFRAC)) call print_runtime()
     if (master .and. (run_mode /= MODE_PLOTTING .and. &
          run_mode /= MODE_PARTICLE .and. run_mode /=MODE_VOLUMEFRAC)) then
       call print_runtime()
