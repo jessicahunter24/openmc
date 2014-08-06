@@ -44,6 +44,9 @@ contains
     
     !Allocate and initialize particle
      call p % initialize()
+     xyz(1) = prn()*(ufs_mesh % width(1)*ufs_mesh % dimension(1)) + ufs_mesh % lower_left(1)
+     xyz(2) = prn()*(ufs_mesh % width(2)*ufs_mesh % dimension(2)) + ufs_mesh % lower_left(2)
+     xyz(3) = prn()*(ufs_mesh % width(3)*ufs_mesh % dimension(3)) + ufs_mesh % lower_left(3)
      p % coord % uvw = (/ 0.5, 0.5, 0.5 /)
      p % coord % universe = BASE_UNIVERSE
 
@@ -56,20 +59,20 @@ contains
 
     !Loop over particles
     do i = 1, work
-      
       !Random location
       xyz(1) = prn()*(ufs_mesh % width(1)*ufs_mesh % dimension(1)) + ufs_mesh % lower_left(1)
       xyz(2) = prn()*(ufs_mesh % width(2)*ufs_mesh % dimension(2)) + ufs_mesh % lower_left(2)
       xyz(3) = prn()*(ufs_mesh % width(3)*ufs_mesh % dimension(3)) + ufs_mesh % lower_left(3)
-      p % coord % xyz = xyz
+      p % coord0 % xyz = xyz
+
       call deallocate_coord(p % coord0 % next)
       p % coord => p % coord0
 
       !Identify cell and material
       call find_cell(p, found_cell)
       if (check_overlaps) call check_cell_overlap(p)
+
       if (.not. found_cell) then
-        print*, 'Overlap found, adding particle' 
         ufs_vol_res = ufs_vol_res + 1
         cycle  
       else !Cell is found, then figure out material id of celli
